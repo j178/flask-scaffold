@@ -1,0 +1,20 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+flask = "*"
+sqlalchemy = "*"
+alembic = "*"
+gunicorn = "*"
+redis = "*"
+flask-sqlalchemy = "*"
+flask-caching = "*"
+flask-migrate = "*"
+cymysql = "*"
+
+[requires]
+python_version = "3.8"
