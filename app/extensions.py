@@ -12,8 +12,7 @@ def init_extentions(app):
     global cache, redis
 
     cache = Cache(app)
-    redis = Redis.from_url(app.config['CACHE_REDIS_URL'],
-                           decode_responses=True)
+    redis = Redis.from_url(app.config["CACHE_REDIS_URL"], decode_responses=True)
 
     # ...
     # Add more extensions here

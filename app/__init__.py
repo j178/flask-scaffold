@@ -33,12 +33,8 @@ class MyFlask(Flask):
 
 # create_app 是整个项目的入口
 def create_app(config_name):
-    app = MyFlask(
-        __name__,
-        static_folder=None,
-        instance_relative_config=True
-    )
-    app.config.from_object('config.{}.Config'.format(config_name))
+    app = MyFlask(__name__, static_folder=None, instance_relative_config=True)
+    app.config.from_object("config.{}.Config".format(config_name))
 
     logging.init_loggers(app)
     models.init_models(app)
@@ -49,7 +45,7 @@ def create_app(config_name):
     def make_context():
         return dict(app=app)
 
-    app.logger.info('App created')
+    app.logger.info("App created")
 
     # Apply some middlewares
     # If you deploy your application using one of these servers

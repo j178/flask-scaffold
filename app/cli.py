@@ -1,6 +1,5 @@
 # Created by John Jiang at 2018/9/27 11:22
 import click
-
 from flask_migrate import Migrate
 
 
@@ -15,10 +14,7 @@ def init_migrate(app):
     # 所以可以直接使用 flask db init 等命令
     from app.models import db
 
-    migrate = Migrate(
-        db=db,
-        compare_type=True,
-        compare_server_default=True)
+    migrate = Migrate(db=db, compare_type=True, compare_server_default=True)
     migrate.init_app(app)
 
 
@@ -27,10 +23,15 @@ def init_cli(app):
     init_migrate(app)
 
     # app.cli 是一个 AppGroup 实例
-    @app.cli.command('profile', short_help='Profile application')
-    @click.option('-h', '--host', default='localhost', envvar='FLASK_RUN_HOST',
-                  help='The host for the application')
-    @click.option('-p', '--port', default=5000, help='The port for the server')
+    @app.cli.command("profile", short_help="Profile application")
+    @click.option(
+        "-h",
+        "--host",
+        default="localhost",
+        envvar="FLASK_RUN_HOST",
+        help="The host for the application",
+    )
+    @click.option("-p", "--port", default=5000, help="The port for the server")
     def profile_command(host, port):
         from werkzeug.middleware.profiler import ProfilerMiddleware
         from werkzeug.serving import run_simple
@@ -38,14 +39,14 @@ def init_cli(app):
         wrapped_app = ProfilerMiddleware(app)
         run_simple(host, port, wrapped_app)
 
-    @app.cli.command('initdb', short_help='Create database')
+    @app.cli.command("initdb", short_help="Create database")
     def init_db():
         # 使用 mysql docker 镜像会自动创建好 MYSQL_DATABASE 指定的数据库
         # 不需要使用这个命令来创建
         import sqlalchemy
 
-        fe_db_uri: str = app.config['SQLALCHEMY_DATABASE_URI']
-        server_uri, database = fe_db_uri.rsplit('/', maxsplit=1)
+        fe_db_uri: str = app.config["SQLALCHEMY_DATABASE_URI"]
+        server_uri, database = fe_db_uri.rsplit("/", maxsplit=1)
         engine = sqlalchemy.create_engine(server_uri, echo=True)
         engine.execute(f"CREATE DATABASE IF NOT EXISTS {database} CHAR SET 'utf8mb4'")
 

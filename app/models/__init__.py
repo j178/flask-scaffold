@@ -17,7 +17,7 @@ class JSONEncodedDict(TypeDecorator):
 
     def process_bind_param(self, value, dialect):
         if value is None:
-            return '{}'
+            return "{}"
         else:
             return json.dumps(value)
 
@@ -30,25 +30,22 @@ class JSONEncodedDict(TypeDecorator):
 
 MutableDict.associate_with(JSONEncodedDict)
 
-session_options = {
-    'expire_on_commit': False
-}
+session_options = {"expire_on_commit": False}
 
 
 class Query(BaseQuery):
-
     @_generative()
     def only_common_attrs(self):
         for ent in self._entities:
             if isinstance(ent, _MapperEntity):
                 class_ = ent.entities[0]
-                if getattr(class_, 'common_attrs', None):
+                if getattr(class_, "common_attrs", None):
                     # inline query.options()
                     self._attributes = self._attributes.copy()
-                    if '_unbound_load_dedupes' not in self._attributes:
-                        self._attributes['_unbound_load_dedupes'] = set()
+                    if "_unbound_load_dedupes" not in self._attributes:
+                        self._attributes["_unbound_load_dedupes"] = set()
 
-                    opt = load_only(*getattr(class_, 'common_attrs'))
+                    opt = load_only(*getattr(class_, "common_attrs"))
                     self._with_options = self._with_options + (opt,)
                     opt.process_query(self)
 
@@ -59,15 +56,21 @@ class Base(BaseModel):
     @declared_attr
     def __tablename__(cls):
         name = cls.__name__
-        return (
-                name[0].lower() +
-                re.sub(r'([A-Z])', lambda m: '_' + m.group(0).lower(), name[1:])
+        return name[0].lower() + re.sub(
+            r"([A-Z])", lambda m: "_" + m.group(0).lower(), name[1:]
         )
 
     id = Column(Integer, primary_key=True, autoincrement=True)
 
-    created_at = Column(DateTime, server_default=text('CURRENT_TIMESTAMP'), nullable=False)
-    updated_at = Column(DateTime, server_default=text('CURRENT_TIMESTAMP'), onupdate=func.now(), nullable=False)
+    created_at = Column(
+        DateTime, server_default=text("CURRENT_TIMESTAMP"), nullable=False
+    )
+    updated_at = Column(
+        DateTime,
+        server_default=text("CURRENT_TIMESTAMP"),
+        onupdate=func.now(),
+        nullable=False,
+    )
     deleted_at = Column(DateTime, nullable=True)
 
 
@@ -78,23 +81,21 @@ db: SQLAlchemy
 def init_models(app):
     global db
 
-    db = SQLAlchemy(model_class=Base,
-                    query_class=Query,
-                    session_options=session_options)
+    db = SQLAlchemy(
+        model_class=Base, query_class=Query, session_options=session_options
+    )
 
     db.init_app(app)
 
     # reflect_tables(app)
 
     from .user import User
+
     # ...
     # Import more models here
 
     @app.shell_context_processor
     def make_context():
-        return dict(
-            db=db,
-            query=db.session.query,
-            User=User)
+        return dict(db=db, query=db.session.query, User=User)
 
     return db
