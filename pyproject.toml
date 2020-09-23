@@ -6,3 +6,6 @@ profile = 'black'
 combine_as_imports = true
 known_first_party = ['app', 'tests']
 known_third_party = ["alembic", "click", "flask", "flask_caching", "flask_migrate", "flask_sqlalchemy", "redis", "sqlalchemy", "werkzeug"]
+
+[tool.pytest.ini_options]
+addopts = '--cov=app --cov=tests -rxXs'
