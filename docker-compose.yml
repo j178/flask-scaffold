@@ -1,13 +1,13 @@
 version: "3"
 services:
-  web:
+  uwsgi:
     build: .
     restart: always
-    volumes:
-      - "./log:/var/log/supervisor"
     depends_on:
       - redis
       - db
+    volumes:
+      - /dev/shm/app.sock:/dev/shm/app.sock
 
   redis:
     image: redis:alpine
@@ -20,16 +20,23 @@ services:
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_USER=plugin
+      - MYSQL_USER=app
       - MYSQL_PASSWORD=123456
-      - MYSQL_DATABASE=plugins
+      - MYSQL_DATABASE=app
     command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
 
   nginx:
     image: nginx:alpine
     volumes:
-      - ./etc/plugins-nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./etc/nginx-uwsgi.conf:/etc/nginx/conf.d/default.conf
+      - /dev/shm/app.sock:/dev/shm/app.sock
     ports:
-      - "80:80"
+      - "8000:8000"
     depends_on:
-      - web
+      - uwsgi
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8000" ]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 15s

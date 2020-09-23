@@ -1,3 +1,12 @@
 uwsgi:
   socket: /dev/shm/app.sock
   manage-script-name: true
+  master: true
+  pidfile: /dev/shm/app.pid
+  module: wsgi:app
+  processes: 2
+  enable-threads: true
+  chown-socket: www-data:www-data
+  chmod-socket: 666
+  vacuum: true
+  die-on-term: true
