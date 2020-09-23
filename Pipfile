@@ -5,18 +5,27 @@ verify_ssl = true
 
 [dev-packages]
 pytest = "*"
+pytest-flask = "*"
+flake8 = "*"
+black = "*"
+isort = "*"
+seed-isort-config = "*"
+pytest-cov = "*"
 
 [packages]
 flask = "*"
 sqlalchemy = "*"
 alembic = "*"
-gunicorn = "*"
 redis = "*"
 flask-sqlalchemy = "*"
 flask-caching = "*"
 flask-migrate = "*"
 cymysql = "*"
 flask-marshmallow = "*"
+uwsgi = "*"
 
 [requires]
 python_version = "3.8"
+
+[pipenv]
+allow_prereleases = true
