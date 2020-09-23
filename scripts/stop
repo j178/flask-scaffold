@@ -1,3 +1,5 @@
-#!/bin/sh -ex
+#!/bin/sh
 
-uwsgi --stop
+set -ex
+
+pipenv run uwsgi --stop /dev/shm/app.pid

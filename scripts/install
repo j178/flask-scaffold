@@ -1,4 +1,6 @@
-#!/bin/sh -ex
+#!/bin/sh
+
+set -ex
 
 export PYPI="https://mirrors.aliyun.com/pypi/simple/"
 export PYPI_HOST="mirrors.aliyun.com"

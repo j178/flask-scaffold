@@ -1,3 +1,5 @@
-#!/bin/sh -ex
+#!/bin/sh
 
-uwsgi --yaml ./etc/uwsgi.yaml
+set -ex
+
+pipenv run uwsgi --yaml ./etc/uwsgi.yaml
