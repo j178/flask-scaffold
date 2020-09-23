@@ -1,0 +1,3 @@
+#!/bin/sh -ex
+
+coverage report --show-missing --skip-covered

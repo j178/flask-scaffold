@@ -1,0 +1,7 @@
+#!/bin/sh -ex
+
+scripts/check
+
+pytest $@
+
+scripts/coverage

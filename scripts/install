@@ -1,0 +1,8 @@
+#!/bin/sh -ex
+
+export PYPI="https://mirrors.aliyun.com/pypi/simple/"
+export PYPI_HOST="mirrors.aliyun.com"
+
+python -m pip install -U pipenv wheel pip setuptools -i "$PYPI" --trusted-host "$PYPI_HOST"
+
+pipenv sync --pypi-mirror "$PYPI"
