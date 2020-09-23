@@ -4,7 +4,6 @@ services:
     build: .
     restart: always
     volumes:
-      - ".:/app"
       - "./log:/var/log/supervisor"
     depends_on:
       - redis
@@ -28,8 +27,6 @@ services:
 
   nginx:
     image: nginx:alpine
-    # 如何在 docker-compose 中删除容器中已有的文件？
-    # 配置证书等
     volumes:
       - ./etc/plugins-nginx.conf:/etc/nginx/conf.d/default.conf
     ports:
