@@ -1,8 +1,8 @@
 uwsgi:
-  socket: /dev/shm/app.sock
+  socket: /dev/shm/uwsgi/app.sock
   manage-script-name: true
   master: true
-  pidfile: /dev/shm/app.pid
+  pidfile: /dev/shm/uwsgi/app.pid
   module: wsgi:app
   processes: 2
   enable-threads: true
