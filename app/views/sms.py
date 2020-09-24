@@ -31,7 +31,6 @@ def sms_api(phone, msg):
 
 def captch_required():
     """装饰器，用来修饰在某些情况下需要通过图形验证码才能调用的函数"""
-    pass
 
 
 def redis_get_int(redis, key, default=None):
