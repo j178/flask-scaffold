@@ -2,8 +2,10 @@
 
 set -ex
 
-export PIP_INDEX_URL="https://mirrors.aliyun.com/pypi/simple/"
+export PIP_NO_CACHE_DIR=off
+export PIP_USE_FEATURE=2020-resolver
+export PIP_DISABLE_PIP_VERSION_CHECK=on
 
 python -m pip install -U wheel pip setuptools pipenv
 
-pipenv sync --dev --pypi-mirror "$PIP_INDEX_URL"
+pipenv sync --dev
