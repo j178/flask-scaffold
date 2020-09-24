@@ -1,12 +1,11 @@
 uwsgi:
-  socket: /data/uwsgi.sock
+  socket: ./data/uwsgi.sock
   manage-script-name: true
   master: true
-  pidfile: /data/uwsgi.pid
+  pidfile: ./data/uwsgi.pid
   module: wsgi:app
   processes: 2
   enable-threads: true
-  chown-socket: www-data:www-data
   chmod-socket: 666
   vacuum: true
   die-on-term: true
