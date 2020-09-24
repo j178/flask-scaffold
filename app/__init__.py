@@ -50,5 +50,5 @@ def create_app(config_name):
     # Apply some middlewares
     # If you deploy your application using one of these servers
     # behind an HTTP proxy you will need this.
-    app.wsgi_app = ProxyFix(app, x_proto=1, x_for=1)
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_for=1)
     return app
