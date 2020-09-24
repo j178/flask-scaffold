@@ -7,4 +7,4 @@ WORKDIR /app
 COPY . .
 
 RUN chmod +x -R ./scripts && scripts/install
-ENTRYPOINT scripts/start
+CMD scripts/start
