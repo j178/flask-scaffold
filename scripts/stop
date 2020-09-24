@@ -2,4 +2,4 @@
 
 set -ex
 
-pipenv run uwsgi --stop /dev/shm/app.pid
+pipenv run uwsgi --stop /data/uwsgi.pid

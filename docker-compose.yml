@@ -1,23 +1,32 @@
 version: "3"
+
+volumes:
+  web-data:
+  db-data:
+
 services:
   uwsgi:
-#    build: .
-    image: myapp:latest
+    container_name: uwsgi
+    build: .
     restart: always
     depends_on:
       - redis
       - db
     volumes:
-      - /dev/shm/uwsgi/:/dev/shm/uwsgi/
+      - web-data:/data
 
   redis:
+    container_name: redis
     image: redis:alpine
 
   # 数据库这类的持久化怎么配置？
   # 密码之类的怎么配置安全？
   # 如何导入初始 sql 文件？
   db:
+    container_name: db
     image: mysql:latest
+    volumes:
+    - db-data:/var/lib/mysql
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=root
@@ -27,10 +36,11 @@ services:
     command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
 
   nginx:
+    container_name: nginx
     image: nginx:alpine
     volumes:
       - ./etc/nginx-uwsgi.conf:/etc/nginx/conf.d/default.conf
-      - /dev/shm/uwsgi/:/dev/shm/uwsgi/
+      - web-data:/data
     ports:
       - "8000:8000"
     depends_on:

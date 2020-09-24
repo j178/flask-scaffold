@@ -2,9 +2,8 @@
 
 set -ex
 
-export PYPI="https://mirrors.aliyun.com/pypi/simple/"
-export PYPI_HOST="mirrors.aliyun.com"
+export PIP_INDEX_URL="https://mirrors.aliyun.com/pypi/simple/"
 
-python -m pip install -U pipenv wheel pip setuptools -i "$PYPI" --trusted-host "$PYPI_HOST"
+python -m pip install -U wheel pip setuptools pipenv
 
-pipenv sync --pypi-mirror "$PYPI"
+pipenv sync --dev --pypi-mirror "$PIP_INDEX_URL"
