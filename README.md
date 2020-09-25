@@ -1,9 +1,32 @@
 # flask-scaffold
 
+## Features
 
-## Commands
+## How to use
 
-命令 | 功能
+```shell script
+$ git clone git@github.com:j178/flask-scaffold.git
+$ cd flask-scaffold
+$ pipenv install
+$ pipenv shell
+```
+
+Under development:
+
+```shell
+$ export FLASK_ENV=development
+$ flask db migrate -m "xxxx"
+```
+
+or
+
+```shell
+$ FLASK_ENV=development flask db migrate -m "xxxx"
+```
+
+## Common commands
+
+command | function
 ---- | ---
 flask run | 启动开发服务器
 flask shell | 启动调试 Shell
@@ -16,16 +39,7 @@ pipenv install *package* | 安装新的依赖
 docker-compose up -d | 启动所有服务
 docker-compose run -d -p 3306:3306 db | 启动开发用数据库
 
-开发时：
-```shell
-$ export FLASK_ENV=development
-```
 
-or
-
-```shell
-$ FLASK_ENV=development flask db migrate -m "xxxx"
-```
 
 ## Parameter validation
 `request.data_dict` contains the data has been parsed and validated.
@@ -59,6 +73,8 @@ from app.errors import APIError, errno
 if request.data_dict.get('id'):
     raise APIError(errno.INVALID_PARAMETERS)
 ```
+
+## Add new flask subcommand
 
 ## Docker
 
