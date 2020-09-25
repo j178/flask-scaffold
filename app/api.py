@@ -46,7 +46,7 @@ class ProtobufCodec(Codec):
     mime_type = "application/x-protobuf"
 
     def __init__(
-        self, receives: Message = None, sends: Message = None, errors: Message = None
+            self, receives: Message = None, sends: Message = None, errors: Message = None
     ):
         assert receives or sends
         if receives:
@@ -166,7 +166,7 @@ class api:
             # an error as when making rest API's the view method more likely
             # to return dicts and status codes than strings and headres
             if isinstance(result, tuple) and (
-                len(result) == 0 or not isinstance(result[0], dict)
+                    len(result) == 0 or not isinstance(result[0], dict)
             ):
                 raise EncodeError(
                     "Pbj does not support flask's default tuple format "
