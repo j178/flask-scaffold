@@ -1,8 +1,6 @@
 FROM python:3.8-slim-buster as python-base
 
-ENV LC_ALL C.UTF-8 \
-    LANG C.UTF-8 \
-    PYTHONUNBUFFERED=1 \
+ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=off \
     PIP_DISABLE_PIP_VERSION_CHECK=on \
@@ -49,7 +47,7 @@ COPY . .
 EXPOSE 8000
 ENTRYPOINT /docker-entrypoint.sh $0 $@
 # Run a local development server
-CMD ["flask", "--reload", "--host=0.0.0.0", "--port=8000"]
+CMD ["flask", "run", "--reload", "--host=0.0.0.0", "--port=8000"]
 
 
 FROM python-base as production
