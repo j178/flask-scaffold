@@ -77,11 +77,11 @@ $ docker build --tag poetry-project --file docker/Dockerfile --target developmen
 ```
 
 # Todo
--[x] 完善 Dockerfile 和 docker-compose  
--[x] 增加 marshmallow 相关内容  
--[ ] 增加 hmac 签名  
--[x] 增加 protobuf 支持  
--[ ] 完善基于 pytest 的测试框架  
--[ ] 增加 trace  
--[ ] 增加 metric  
--[ ] 增加日志配置
+- [x] 完善 Dockerfile 和 docker-compose
+- [x] 增加 marshmallow 相关内容
+- [ ] 增加 hmac 签名
+- [x] 增加 protobuf 支持
+- [ ] 完善基于 pytest 的测试框架
+- [ ] 增加 trace
+- [ ] 增加 metric
+- [ ] 增加日志配置
