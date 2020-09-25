@@ -61,5 +61,5 @@ COPY ./app /app
 WORKDIR /app
 
 ENTRYPOINT /docker-entrypoint.sh $0 $@
-COPY ./docker/uwsgi.yaml /uwsgi.yaml
+COPY ./etc/uwsgi.yaml /uwsgi.yaml
 CMD ["uwsgi", "--yaml", "/uwsgi.yaml"]
