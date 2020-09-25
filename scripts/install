@@ -2,9 +2,7 @@
 
 set -ex
 
-export PIP_NO_CACHE_DIR=off
-export PIP_USE_FEATURE=2020-resolver
-export PIP_DISABLE_PIP_VERSION_CHECK=on
+
 export PIP_INDEX_URL="https://mirrors.aliyun.com/pypi/simple/"
 
 python -m pip install -U wheel pip setuptools pipenv
