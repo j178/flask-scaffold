@@ -8,6 +8,7 @@ from flask import current_app, redirect, request, url_for
 from werkzeug.utils import secure_filename
 
 from app.extensions import cache
+from app.api import api, json, protobuf
 
 from . import files
 
@@ -18,6 +19,13 @@ log = logging.getLogger(__name__)
 def index():
     log.error("this is a test")
     return "hello"
+
+
+@files.route("/post", methods=["POST"])
+@api(json, protobuf())
+def test_post():
+    data = request.data_dict
+    return {}
 
 
 @files.route("/timing")

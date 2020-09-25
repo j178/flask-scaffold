@@ -23,6 +23,7 @@ flask-migrate = "*"
 cymysql = "*"
 flask-marshmallow = "*"
 uwsgi = "*"
+protobuf = "*"
 
 [requires]
 python_version = "3.8"
