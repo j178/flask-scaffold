@@ -1,9 +1,9 @@
 # Created by John Jiang at 2018/7/6 13:50
 
 from flask import Config, Flask, Response, json, jsonify
-from werkzeug.middleware.proxy_fix import ProxyFix
 
 from . import extensions, logging, models, views
+from .errors import APIError
 
 
 class MyFlask(Flask):
@@ -29,6 +29,20 @@ class MyFlask(Flask):
             if isinstance(response, dict):
                 response = jsonify(response)
             return super().force_type(response, environ)
+
+    def handle_http_exception(self, e):
+        if e.code is None:
+            return e
+
+        handler = self._find_error_handler(e)
+        if handler is None:
+            # 自己定义的 HTTPException 可以直接返回 e 作为响应
+            if isinstance(e, APIError):
+                return e
+            # 未处理的部分 HTTPException，简单的组成 JSON 返回
+            return jsonify(success=False, message=e.description, code=e.code), e.code
+        # 明确定义了 handler 的 HTTPException, 则使用 handler 处理
+        return handler(e)
 
 
 # create_app 是整个项目的入口
