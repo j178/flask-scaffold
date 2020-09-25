@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
 # Created by johnj at 2020/9/25
 from functools import wraps
-from marshmallow import Schema
-from werkzeug.exceptions import BadRequest, NotAcceptable, UnsupportedMediaType
-from flask import Flask, Request, Response, request as flask_request, jsonify
+
+from flask import Flask, Request, Response, jsonify, request as flask_request
 from google.protobuf import json_format
-from google.protobuf.message import Message, DecodeError as ProtobufDecodeError
+from google.protobuf.message import DecodeError as ProtobufDecodeError, Message
 from google.protobuf.reflection import GeneratedProtocolMessageType
+from marshmallow import Schema, ValidationError
+from werkzeug.exceptions import BadRequest, NotAcceptable, UnsupportedMediaType
+
+from app import APIError
+from app.errors import errno
 
 
 class EncodeError(Exception):
@@ -32,16 +36,18 @@ class URLEncodedCodec(Codec):
 
 
 class JsonCodec(Codec):
-    mime_type = 'application/json'
+    mime_type = "application/json"
 
     def parse_request_data(self, request) -> dict:
         return request.get_json(slient=False)
 
 
 class ProtobufCodec(Codec):
-    mime_type = 'application/x-protobuf'
+    mime_type = "application/x-protobuf"
 
-    def __init__(self, receives: Message = None, sends: Message = None, errors: Message = None):
+    def __init__(
+        self, receives: Message = None, sends: Message = None, errors: Message = None
+    ):
         assert receives or sends
         if receives:
             assert isinstance(receives, GeneratedProtocolMessageType)
@@ -70,10 +76,7 @@ class ProtobufCodec(Codec):
     def make_response(self, data, status_code, headers) -> Response:
         if not data:
             return Flask.response_class(
-                "",
-                status_code,
-                headers,
-                mimetype=self.mime_type
+                "", status_code, headers, mimetype=self.mime_type
             )
 
         if not self.send_type:
@@ -92,7 +95,7 @@ class ProtobufCodec(Codec):
             response_data.SerializeToString(),
             status_code,
             headers,
-            mimetype=self.mime_type
+            mimetype=self.mime_type,
         )
 
 
@@ -126,7 +129,7 @@ class api:
         For PUT and POST requests, convert message into a dictionary which can
         be used by app.route functions.
         """
-        if request.method in ('POST', 'PUT'):
+        if request.method in ("POST", "PUT"):
             if request.content_type in self.mime_types:
                 codec = self.codecs[request.content_type]
                 return codec.parse_request_data(request)
@@ -134,14 +137,23 @@ class api:
                 raise UnsupportedMediaType
 
     def response_mimetype(self, request):
-        return request.accept_mimetypes.best_match(
-            self.mime_types
-        )
+        return request.accept_mimetypes.best_match(self.mime_types)
+
+    def validate_request_data(self, data: dict):
+        if self.schema:
+            try:
+                return self.schema.load(data)
+            except ValidationError as e:
+                message = format_message(e)
+                raise APIError(errno.INVALID_PARAMETERS, message)
+        return data
 
     def __call__(self, fn):
         @wraps(fn)
         def to_response(*args, **kwargs):
-            flask_request.data_dict = self.parse_request_data(flask_request)
+            data_dict = self.parse_request_data(flask_request)
+            data_dict = self.validate_request_data(data_dict)
+            flask_request.data_dict = data_dict
 
             result = fn(*args, **kwargs)
 
@@ -153,10 +165,9 @@ class api:
             # If the view method returns a default flask-style tuple throw
             # an error as when making rest API's the view method more likely
             # to return dicts and status codes than strings and headres
-            if (isinstance(result, tuple) and (
-                    len(result) == 0 or
-                    not isinstance(result[0], dict)
-            )):
+            if isinstance(result, tuple) and (
+                len(result) == 0 or not isinstance(result[0], dict)
+            ):
                 raise EncodeError(
                     "Pbj does not support flask's default tuple format "
                     "of (response, headers) or (response, headers, "
@@ -186,10 +197,6 @@ class api:
                     "status code or flask Response."
                 )
 
-            return self.codecs[mimetype].make_response(
-                data,
-                status_code,
-                headers
-            )
+            return self.codecs[mimetype].make_response(data, status_code, headers)
 
         return to_response
