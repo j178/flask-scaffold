@@ -9,8 +9,7 @@ from google.protobuf.reflection import GeneratedProtocolMessageType
 from marshmallow import Schema, ValidationError
 from werkzeug.exceptions import BadRequest, NotAcceptable, UnsupportedMediaType
 
-from app import APIError
-from app.errors import errno
+from app.errors import APIError, errno
 
 
 class EncodeError(Exception):
@@ -144,8 +143,9 @@ class api:
             try:
                 return self.schema.load(data)
             except ValidationError as e:
+                # todo format error message
                 message = format_message(e)
-                raise APIError(errno.INVALID_PARAMETERS, message)
+                raise APIError(errno.INVALID_PARAMETERS, message) from None
         return data
 
     def __call__(self, fn):

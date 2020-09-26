@@ -19,6 +19,8 @@ class errno(IntEnum):
 
     UNKNOWN = 100, "Uknown error"
     INVALID_PARAMETERS = 101, "Invalid parameters"
+    # ...
+    # Add more custom errors here
 
 
 class APIError(HTTPException):

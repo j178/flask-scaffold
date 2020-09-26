@@ -61,6 +61,8 @@ def update_message():
     ...
 ```
 
+## Auth
+
 ## Protobuf support
  
 ## Error handling
@@ -73,6 +75,8 @@ from app.errors import APIError, errno
 if request.data_dict.get('id'):
     raise APIError(errno.INVALID_PARAMETERS)
 ```
+
+## Logging
 
 ## Add new flask subcommand
 

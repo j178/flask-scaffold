@@ -2,8 +2,8 @@
 
 from flask import Config, Flask, Response, json, jsonify
 
-from . import extensions, logging, models, views
-from .errors import APIError
+from app import extensions, logging, models, views
+from app.errors import APIError
 
 
 class MyFlask(Flask):
