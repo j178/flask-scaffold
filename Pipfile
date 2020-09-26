@@ -24,6 +24,7 @@ cymysql = "*"
 flask-marshmallow = "*"
 uwsgi = "*"
 protobuf = "*"
+flask-log-request-id = "*"
 
 [requires]
 python_version = "3.8"

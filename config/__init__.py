@@ -14,3 +14,5 @@ class BaseConfig:
 
     # ...
     # Add your own settings here
+
+    LOG_REQUEST_ID_LOG_ALL_REQUESTS = True
