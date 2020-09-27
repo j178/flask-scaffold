@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package jarvis.common;
+
+import "app/protos/common.proto";
+
+message GetUpdateResponse{
+  common.ErrorCode code = 1;
+
+}

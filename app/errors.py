@@ -19,6 +19,7 @@ class errno(IntEnum):
 
     UNKNOWN = 100, "Uknown error"
     INVALID_PARAMETERS = 101, "Invalid parameters"
+    OBJECT_NOT_FOUND = 102, "{object} not found"
     # ...
     # Add more custom errors here
 

@@ -93,13 +93,16 @@ def init_models(app):
 
     # reflect_tables(app)
 
-    from .models import App
+    from .models import App, AppVersion, AppUpdate
+
+    App.create_default_app()
 
     # ...
     # Import more models here
 
     @app.shell_context_processor
     def make_context():
-        return dict(db=db, query=db.session.query, App=App)
+        return dict(db=db, query=db.session.query,
+                    App=App, AppVersion=AppVersion, AppUpdate=AppUpdate)
 
     return db
