@@ -52,11 +52,12 @@ class Query(BaseQuery):
 
 class Base(BaseModel):
     common_attrs = ()
+    tablename_prefix = ''
 
     @declared_attr
     def __tablename__(cls):
         name = cls.__name__
-        return name[0].lower() + re.sub(
+        return cls.tablename_prefix + name[0].lower() + re.sub(
             r"([A-Z])", lambda m: "_" + m.group(0).lower(), name[1:]
         )
 
@@ -85,17 +86,19 @@ db: SQLAlchemy
 def init_models(app):
     global db
 
+    Base.tablename_prefix = app.config.get('SQLALCHEMY_TABLE_NAME_PREFIX', '')
     db = SQLAlchemy(
         model_class=Base, query_class=Query, session_options=session_options
     )
 
     db.init_app(app)
+    db.app = app
 
     # reflect_tables(app)
 
     from .models import App, AppVersion, AppUpdate
 
-    App.create_default_app()
+    # App.create_default_app()
 
     # ...
     # Import more models here
