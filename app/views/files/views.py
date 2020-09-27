@@ -7,8 +7,8 @@ import time
 from flask import current_app, redirect, request, url_for
 from werkzeug.utils import secure_filename
 
-from app.extensions import cache
 from app.api import api, json, protobuf
+from app.extensions import cache
 
 from . import files
 

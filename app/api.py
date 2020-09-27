@@ -7,6 +7,7 @@ from google.protobuf import json_format
 from google.protobuf.message import DecodeError as ProtobufDecodeError, Message
 from google.protobuf.reflection import GeneratedProtocolMessageType
 from marshmallow import Schema, ValidationError
+from werkzeug.datastructures import CombinedMultiDict, MultiDict
 from werkzeug.exceptions import BadRequest, NotAcceptable, UnsupportedMediaType
 
 from app.errors import APIError, errno
@@ -19,7 +20,7 @@ class EncodeError(Exception):
 class Codec:
     mime_type: str = None
 
-    def parse_request_data(self, request: Request) -> dict:
+    def parse_request_data(self, request: Request) -> MultiDict:
         raise NotImplementedError
 
     def make_response(self, data, status_code, headers) -> Response:
@@ -30,8 +31,16 @@ class Codec:
 class URLEncodedCodec(Codec):
     mime_type = "application/x-www-form-urlencoded"
 
-    def parse_request_data(self, request: Request) -> dict:
-        return request.values
+    def parse_request_data(self, request: Request) -> MultiDict:
+        return request.form
+
+
+class MultipartCodec(Codec):
+    mime_type = "multipart/form-data"
+
+    def parse_request_data(self, request: Request) -> MultiDict:
+        # Combine form and files
+        return CombinedMultiDict([request.form, request.files])
 
 
 class JsonCodec(Codec):
@@ -118,16 +127,20 @@ protobuf = ProtobufCodec
 
 
 class api:
-    def __init__(self, *codecs, schema: Schema = None):
+    def __init__(
+        self, *codecs, query_schema: Schema = None, body_schema: Schema = None
+    ):
         self.codecs = {codec.mime_type: codec for codec in codecs}
         self.mime_types = self.codecs.keys()
-        self.schema = schema
+        self.query_schema = query_schema
+        self.body_schema = body_schema
 
     def parse_request_data(self, request):
         """
         For PUT and POST requests, convert message into a dictionary which can
         be used by app.route functions.
         """
+        # We parse and validate PUT and POST requests only.
         if request.method in ("POST", "PUT"):
             if request.content_type in self.mime_types:
                 codec = self.codecs[request.content_type]
@@ -139,20 +152,33 @@ class api:
         return request.accept_mimetypes.best_match(self.mime_types)
 
     def validate_request_data(self, data: dict):
-        if self.schema:
+        """Loads and validates query parameters and body content."""
+        query_dict = flask_request.args
+        data_dict = data
+
+        if self.query_schema:
             try:
-                return self.schema.load(data)
+                query_dict = self.query_schema.load(query_dict)
+            except ValidationError as e:
+                message = format_message(e)
+                raise APIError(errno.INVALID_PARAMETERS, message) from None
+
+        if self.body_schema:
+            try:
+                data_dict = self.body_schema.load(data)
             except ValidationError as e:
                 # todo format error message
                 message = format_message(e)
                 raise APIError(errno.INVALID_PARAMETERS, message) from None
-        return data
+
+        return query_dict, data_dict
 
     def __call__(self, fn):
         @wraps(fn)
         def to_response(*args, **kwargs):
             data_dict = self.parse_request_data(flask_request)
-            data_dict = self.validate_request_data(data_dict)
+            query_dict, data_dict = self.validate_request_data(data_dict)
+            flask_request.query_dict = query_dict
             flask_request.data_dict = data_dict
 
             result = fn(*args, **kwargs)

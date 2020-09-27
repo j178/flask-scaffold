@@ -1,6 +1,8 @@
 # Created by John Jiang at 2018/7/6 13:50
 
-from flask import Config, Flask, Response, json, jsonify
+from flask import Config, Flask, json, jsonify
+from flask.wrappers import Request, Response
+from werkzeug.datastructures import MultiDict
 
 from app import extensions, logging, models, views
 from app.errors import APIError
@@ -20,6 +22,10 @@ class MyFlask(Flask):
     class json_encoder(json.JSONEncoder):
         def default(self, o):
             return super().default(o)
+
+    class request_class(Request):
+        query_dict: MultiDict = None
+        data_dict: MultiDict = None
 
     # 改进默认的 response 类型，可以从 view funciton 中直接返回 dict
     class response_class(Response):

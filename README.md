@@ -80,6 +80,8 @@ if request.data_dict.get('id'):
 
 ## DB model
 
+## Pagnination
+
 ### Query
 
 ### Save & Update
