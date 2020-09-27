@@ -118,6 +118,7 @@ class ProtobufCodec(Codec):
 urlencoded = URLEncodedCodec()
 json = JsonCodec()
 protobuf = ProtobufCodec
+multipart = MultipartCodec()
 
 
 def _result_to_response_tuple(result):
