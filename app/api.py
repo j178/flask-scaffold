@@ -129,7 +129,11 @@ protobuf = ProtobufCodec
 
 class api:
     def __init__(
-        self, *, codecs: List[Codec], query_schema: Schema = None, body_schema: Schema = None
+        self,
+        *,
+        codecs: List[Codec],
+        query_schema: Schema = None,
+        body_schema: Schema = None,
     ):
         self.codecs = {codec.mime_type: codec for codec in codecs}
         self.mime_types = self.codecs.keys()
