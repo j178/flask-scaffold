@@ -1,9 +1,11 @@
 [tool.black]
 target-version = ['py36']
+exclude = '/(.*_pb2.py)'
 
 [tool.isort]
 profile = 'black'
 combine_as_imports = true
+skip_glob = '*_pb2.py'
 
 [tool.pytest.ini_options]
 addopts = '--cov=app --cov=tests -rxXs'

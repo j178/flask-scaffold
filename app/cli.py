@@ -43,7 +43,9 @@ def init_cli(app):
     def compile_protobuf():
         import subprocess
 
-        subprocess.run("protoc --proto_path=. --python_out=. ./app/protos/*.proto", shell=True)
+        subprocess.run(
+            "protoc --proto_path=. --python_out=. ./app/protos/*.proto", shell=True
+        )
 
     @app.cli.command("initdb", short_help="Create database")
     def init_db():

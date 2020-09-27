@@ -3,7 +3,14 @@
 from functools import wraps
 from typing import List
 
-from flask import Flask, Request, Response, jsonify, request as flask_request
+from flask import (
+    Flask,
+    Request,
+    Response,
+    json as jsonlib,
+    jsonify,
+    request as flask_request,
+)
 from google.protobuf import json_format
 from google.protobuf.message import DecodeError as ProtobufDecodeError, Message
 from google.protobuf.reflection import GeneratedProtocolMessageType
@@ -108,6 +115,11 @@ class ProtobufCodec(Codec):
         )
 
 
+urlencoded = URLEncodedCodec()
+json = JsonCodec()
+protobuf = ProtobufCodec
+
+
 def _result_to_response_tuple(result):
     # Returned tuples are also evaluated
     if isinstance(result, tuple):
@@ -122,9 +134,8 @@ def _result_to_response_tuple(result):
     return result, 200, {}
 
 
-urlencoded = URLEncodedCodec()
-json = JsonCodec()
-protobuf = ProtobufCodec
+def _format_error_message(exception: ValidationError):
+    return jsonlib.dumps(exception.messages, indent=2, ensure_ascii=False)
 
 
 class make_api:
@@ -165,15 +176,14 @@ class make_api:
             try:
                 query_dict = self.query_schema.load(query_dict)
             except ValidationError as e:
-                message = format_message(e)
+                message = _format_error_message(e)
                 raise APIError(errno.INVALID_PARAMETERS, message) from None
 
         if self.body_schema:
             try:
                 data_dict = self.body_schema.load(data)
             except ValidationError as e:
-                # todo format error message
-                message = format_message(e)
+                message = _format_error_message(e)
                 raise APIError(errno.INVALID_PARAMETERS, message) from None
 
         return query_dict, data_dict

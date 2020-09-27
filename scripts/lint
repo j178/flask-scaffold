@@ -4,6 +4,6 @@ set -ex
 
 export SOURCE_FILES="app tests"
 
-autoflake --in-place --recursive $SOURCE_FILES
+autoflake --in-place --recursive --exclude *_pb2.py $SOURCE_FILES
 isort $SOURCE_FILES
 black $SOURCE_FILES
