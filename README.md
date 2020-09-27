@@ -78,6 +78,14 @@ if request.data_dict.get('id'):
 
 ## Logging
 
+## DB model
+
+### Query
+
+### Save & Update
+
+### Delete
+
 ## Add new flask subcommand
 
 ## Docker
