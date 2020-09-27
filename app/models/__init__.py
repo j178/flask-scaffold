@@ -73,6 +73,10 @@ class Base(BaseModel):
     )
     deleted_at = Column(DateTime, nullable=True)
 
+    def to_dict(self):
+        # todo
+        self.query.only_common_attrs()
+
 
 # Usage: from app.models import db
 db: SQLAlchemy
@@ -89,13 +93,13 @@ def init_models(app):
 
     # reflect_tables(app)
 
-    from .user import User
+    from .models import App
 
     # ...
     # Import more models here
 
     @app.shell_context_processor
     def make_context():
-        return dict(db=db, query=db.session.query, User=User)
+        return dict(db=db, query=db.session.query, App=App)
 
     return db

@@ -2,11 +2,9 @@
 
 
 def init_views(app):
-    from .files import files
-    from .sms import sms
+    from .update import update
 
     # ...
     # Import more views here
 
-    app.register_blueprint(files)
-    app.register_blueprint(sms)
+    app.register_blueprint(update)

@@ -7,6 +7,5 @@ class ErrorResponseSchema(Schema):
     class Meta:
         pass
 
-    success = fields.Boolean(required=True)
     code = fields.Integer(required=True)
-    message = fields.String(required=True)
+    msg = fields.String(required=True)

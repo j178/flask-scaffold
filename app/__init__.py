@@ -46,7 +46,7 @@ class MyFlask(Flask):
             if isinstance(e, APIError):
                 return e
             # 未处理的部分 HTTPException，简单的组成 JSON 返回
-            return jsonify(success=False, message=e.description, code=e.code), e.code
+            return jsonify(msg=e.description, code=e.code), e.code
         # 明确定义了 handler 的 HTTPException, 则使用 handler 处理
         return handler(e)
 
