@@ -7,6 +7,7 @@ class BaseConfig:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_DATABASE_URI = 'mysql+cymysql://app:123456@db:3306/app'
+    SQLALCHEMY_TABLE_NAME_PREFIX = 'jarvis_'
 
     # redis 作用：通用缓存、存 session、消息队列 backend
     CACHE_TYPE = 'redis'

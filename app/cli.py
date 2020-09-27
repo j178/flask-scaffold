@@ -51,12 +51,9 @@ def init_cli(app):
     def init_db():
         # 使用 mysql docker 镜像会自动创建好 MYSQL_DATABASE 指定的数据库
         # 不需要使用这个命令来创建
-        import sqlalchemy
+        from app.models import db
 
-        fe_db_uri: str = app.config["SQLALCHEMY_DATABASE_URI"]
-        server_uri, database = fe_db_uri.rsplit("/", maxsplit=1)
-        engine = sqlalchemy.create_engine(server_uri, echo=True)
-        engine.execute(f"CREATE DATABASE IF NOT EXISTS {database} CHAR SET 'utf8mb4'")
+        db.create_all()
 
     # ...
     # Add more custom commands here
