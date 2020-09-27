@@ -38,7 +38,8 @@ class App(db.Model):
         return app
 
     def latest_update(self) -> 'AppUpdate':
-        return 
+
+        return
 
 class AppVersion(db.Model):
     """A version of the app"""
@@ -47,7 +48,7 @@ class AppVersion(db.Model):
         FULL = 1
         PATCH = 2
 
-    app_id = db.Column(db.Integer, nullable=False)
+    app_id = db.Column(db.Integer, nullable=False, index=True)
 
     version = db.Column(db.String(32), nullable=False)
     version_code = db.Column(db.Integer, nullable=False)
@@ -71,8 +72,8 @@ class AppUpdate(db.Model):
         GRAY = 1
         NORMAL = 2
 
-    app_id = db.Column(db.Integer, nullable=False)
-    app_version_id = db.Column(db.Integer, nullable=False)
+    app_id = db.Column(db.Integer, nullable=False, index=True)
+    app_version_id = db.Column(db.Integer, nullable=False, index=True)
 
     is_force = db.Column(db.Boolean, nullable=False, default=0)
     # selector condtions
