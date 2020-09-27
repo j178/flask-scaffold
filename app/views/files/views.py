@@ -7,7 +7,7 @@ import time
 from flask import current_app, redirect, request, url_for
 from werkzeug.utils import secure_filename
 
-from app.api import api, json, protobuf
+from app.api import make_api, json, protobuf
 from app.extensions import cache
 
 from . import files
@@ -22,7 +22,7 @@ def index():
 
 
 @files.route("/post", methods=["POST"])
-@api(json, protobuf())
+@make_api(json, protobuf())
 def test_post():
     data = request.data_dict
     return {}

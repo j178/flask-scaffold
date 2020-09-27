@@ -48,14 +48,14 @@ Define a new parameter schema:
 ```python
 from flask import request
 from marshmallow import Schema, fields
-from app import api
+from app import make_api
 
 class UpdateMessageSchema(Schema):
     id = fields.Integer(required=True)
     message = fields.String(required=True)
 
 @app.route('/message', methods=['POST'])
-@api.api(api.json, schema=UpdateMessageSchema())
+@make_api.make_api(make_api.json, schema=UpdateMessageSchema())
 def update_message():
     data = request.data_dict
     ...

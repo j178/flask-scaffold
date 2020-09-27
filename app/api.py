@@ -127,7 +127,7 @@ json = JsonCodec()
 protobuf = ProtobufCodec
 
 
-class api:
+class make_api:
     def __init__(
         self,
         *,
@@ -224,7 +224,7 @@ class api:
 
             if not isinstance(data, dict):
                 raise EncodeError(
-                    "Methods decorated with api must return a dict, int "
+                    "Methods decorated with make_api must return a dict, int "
                     "status code or flask Response."
                 )
 
