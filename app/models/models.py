@@ -22,6 +22,16 @@ class App(db.Model):
     app_name = db.Column(db.String(255), nullable=False, default="", unique=True)
     description = db.Column(db.String(2048), nullable=True)
 
+    versions = db.relationship('AppVersion',
+                               primaryjoin='foreign(AppVersion.app_id) == remote(App.id)',
+                               back_populates='app',
+                               order_by='AppVersion.id.desc()',
+                               lazy='dynamic')
+    updates = db.relationship('AppUpdate',
+                              primaryjoin='foreign(AppUpdate.app_id) == remote(App.id)',
+                              back_populates='app',
+                              order_by='AppUpdate.id.desc()',
+                              lazy='dynamic')
     @classmethod
     def create_default_app(cls):
         default_app_name = 'com.didi.voyager.jarvis'
@@ -30,16 +40,15 @@ class App(db.Model):
         try:
             db.session.commit()
         except IntegrityError:
-            pass
+            db.session.rollback()
 
     @classmethod
     def from_app_name(cls, app_name) -> 'App':
         app = db.session.query.filter_by(app_name=app_name).one_or_none()
         return app
 
-    def latest_update(self) -> 'AppUpdate':
-
-        return
+    def latest_version(self) -> 'AppVersion':
+        return self.versions.first()
 
 class AppVersion(db.Model):
     """A version of the app"""
@@ -60,7 +69,16 @@ class AppVersion(db.Model):
     update_text = db.Column(db.Text)
     update_text_en = db.Column(db.Text)
 
-    app = db.relationship(App, primaryjoin='AppVersion.app_id == foreign(App.id)')
+    app = db.relationship(App,
+                          primaryjoin='foreign(AppVersion.app_id) == remote(App.id)',
+                          uselist=False,
+                          back_populates='versions')
+    from sqlalchemy.orm import remote,relationship
+    updates = db.relationship('AppUpdate',
+                              primaryjoin='foreign(AppUpdate.app_version_id == remote(AppVersion.id))',
+                              back_populates='app_version',
+                              order_by='AppVersion.id.desc()',
+                              lazy='dynamic')
 
     @property
     def is_patch(self):
@@ -81,8 +99,13 @@ class AppUpdate(db.Model):
     conditions = db.Column(db.String(2048), nullable=True)
     type = db.Column(db.SmallInteger, nullable=False, default=Type.NORMAL)
 
-    app = db.relationship(App, primaryjoin='AppUpdate.app_id == foreign(App.id)')
-    app_version = db.relationship(AppVersion, primaryjoin='AppUpdate.app_version_id == foreign(AppVersion.id)')
+    app = db.relationship(App, uselist=False,
+                          primaryjoin='AppUpdate.app_id == foreign(App.id)',
+                          back_populates='updates')
+    app_version = db.relationship(AppVersion,
+                                  uselist=False,
+                                  primaryjoin='foreign(AppUpdate.app_version_id) == remote(AppVersion.id)',
+                                  back_populates='versions')
 
     def to_dict(self, params):
         result = {
