@@ -4,8 +4,8 @@ from marshmallow import Schema, fields
 
 
 class Language(Enum):
-    CN = 'zh-CN'
-    EN = 'en-US'
+    CN = "zh-CN"
+    EN = "en-US"
 
 
 class GetUpdateSchema(Schema):

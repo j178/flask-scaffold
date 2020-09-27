@@ -1,6 +1,8 @@
 from flask import request
 
 from app.api import json, make_api, multipart, protobuf
+from app.errors import APIError, errno
+from app.models.models import App
 from app.protos.update_pb2 import GetUpdateResponse
 
 from . import update
@@ -10,8 +12,6 @@ from .schemas import (
     GetUpdateSchema,
     ListVersionsSchema,
 )
-from app.models.models import App
-from app.errors import APIError, errno
 
 
 @update.route("/", methods=["GET"])
@@ -21,10 +21,9 @@ from app.errors import APIError, errno
 def get_update():
     query_dict = request.query_dict
 
-    app = App.from_app_name(query_dict['app_name'])
+    app = App.from_app_name(query_dict["app_name"])
     if not app:
         raise APIError(errno.OBJECT_NOT_FOUND, object="App")
-
 
 
 @update.route("/version", methods=["POST"])

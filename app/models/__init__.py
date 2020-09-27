@@ -52,13 +52,15 @@ class Query(BaseQuery):
 
 class Base(BaseModel):
     common_attrs = ()
-    tablename_prefix = ''
+    tablename_prefix = ""
 
     @declared_attr
     def __tablename__(cls):
         name = cls.__name__
-        return cls.tablename_prefix + name[0].lower() + re.sub(
-            r"([A-Z])", lambda m: "_" + m.group(0).lower(), name[1:]
+        return (
+            cls.tablename_prefix
+            + name[0].lower()
+            + re.sub(r"([A-Z])", lambda m: "_" + m.group(0).lower(), name[1:])
         )
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -86,7 +88,7 @@ db: SQLAlchemy
 def init_models(app):
     global db
 
-    Base.tablename_prefix = app.config.get('SQLALCHEMY_TABLE_NAME_PREFIX', '')
+    Base.tablename_prefix = app.config.get("SQLALCHEMY_TABLE_NAME_PREFIX", "")
     db = SQLAlchemy(
         model_class=Base, query_class=Query, session_options=session_options
     )
@@ -96,16 +98,20 @@ def init_models(app):
 
     # reflect_tables(app)
 
-    from .models import App, AppVersion, AppUpdate
+    from .models import App, AppUpdate, AppVersion
 
     # App.create_default_app()
-
     # ...
     # Import more models here
 
     @app.shell_context_processor
     def make_context():
-        return dict(db=db, query=db.session.query,
-                    App=App, AppVersion=AppVersion, AppUpdate=AppUpdate)
+        return dict(
+            db=db,
+            query=db.session.query,
+            App=App,
+            AppVersion=AppVersion,
+            AppUpdate=AppUpdate,
+        )
 
     return db
