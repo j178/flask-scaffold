@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Created by johnj at 2020/9/25
 from functools import wraps
+from typing import List
 
 from flask import Flask, Request, Response, jsonify, request as flask_request
 from google.protobuf import json_format
@@ -128,7 +129,7 @@ protobuf = ProtobufCodec
 
 class api:
     def __init__(
-        self, *codecs, query_schema: Schema = None, body_schema: Schema = None
+        self, *, codecs: List[Codec], query_schema: Schema = None, body_schema: Schema = None
     ):
         self.codecs = {codec.mime_type: codec for codec in codecs}
         self.mime_types = self.codecs.keys()
