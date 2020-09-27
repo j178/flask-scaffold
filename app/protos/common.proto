@@ -1,0 +1,23 @@
+
+syntax = "proto3";
+
+package jarvis.common;
+
+enum ErrorCode {
+  SUCCESS = 0;
+  ERROR_PARAM = 10;
+  ERROR_AUTH = 20;
+  ERROR_DATABASE = 30;
+  ERROR_INTERNAL = 40;
+  ERROR_NOTFOUND = 50;
+  ERROR_ALREADYEXIST = 60;
+  ERROR_STATUS = 70;
+  ERROR_METHOD = 80;
+  ERROR_VERSION = 90;
+  ERROR_UNCAUGHT_EXCEPTION = 100;
+}
+
+message ErrorResponse{
+  ErrorCode code = 1;
+  string message = 2;
+}

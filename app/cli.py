@@ -39,6 +39,12 @@ def init_cli(app):
         wrapped_app = ProfilerMiddleware(app)
         run_simple(host, port, wrapped_app)
 
+    @app.cli.command("compile-proto", short_help="Compoile Protobuf")
+    def compile_protobuf():
+        import subprocess
+
+        subprocess.run("protoc --proto_path=. --python_out=. ./app/protos/*.proto", shell=True)
+
     @app.cli.command("initdb", short_help="Create database")
     def init_db():
         # 使用 mysql docker 镜像会自动创建好 MYSQL_DATABASE 指定的数据库

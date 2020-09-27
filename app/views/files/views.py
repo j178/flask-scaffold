@@ -9,7 +9,7 @@ from werkzeug.utils import secure_filename
 
 from app.api import make_api, json, protobuf
 from app.extensions import cache
-
+from app.protos.common_pb2 import ErrorResponse
 from . import files
 
 log = logging.getLogger(__name__)
@@ -22,7 +22,7 @@ def index():
 
 
 @files.route("/post", methods=["POST"])
-@make_api(json, protobuf())
+@make_api(codecs=[json, protobuf(sends=ErrorResponse)])
 def test_post():
     data = request.data_dict
     return {}
