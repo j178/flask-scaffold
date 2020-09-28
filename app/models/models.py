@@ -16,9 +16,6 @@ class Language(Enum):
 
 class App(db.Model):
     """A managed app"""
-
-    common_attrs = ("id", "app_name")
-
     app_name = db.Column(db.String(255), nullable=False, default="", unique=True)
     description = db.Column(db.String(2048), nullable=True)
 
@@ -27,13 +24,6 @@ class App(db.Model):
         primaryjoin="foreign(AppVersion.app_id) == remote(App.id)",
         back_populates="app",
         order_by="AppVersion.id.desc()",
-        lazy="dynamic",
-    )
-    updates = db.relationship(
-        "AppUpdate",
-        primaryjoin="foreign(AppUpdate.app_id) == remote(App.id)",
-        back_populates="app",
-        order_by="AppUpdate.id.desc()",
         lazy="dynamic",
     )
 
@@ -54,6 +44,18 @@ class App(db.Model):
 
     def latest_version(self) -> "AppVersion":
         return self.versions.first()
+
+    def select_update(self, query:dict) -> 'AppUpdate':
+        current_version = query['version_code']
+        # iterate versions from latest to oldest
+        # todo cache all versions in memory for a period
+        for version in self.versions:
+            if current_version >= version.version_code:
+                break
+            update = version.select_update(query)
+            if update:
+                return update
+
 
 
 class AppVersion(db.Model):
@@ -89,6 +91,12 @@ class AppVersion(db.Model):
         lazy="dynamic",
     )
 
+    def select_update(self, query:dict):
+        # todo cache updates
+        for update in self.updates:
+            if update.can_update(query):
+                return update
+
     @property
     def is_patch(self):
         return self.type == self.Type.PATCH
@@ -108,12 +116,6 @@ class AppUpdate(db.Model):
     conditions = db.Column(db.String(2048), nullable=True)
     type = db.Column(db.SmallInteger, nullable=False, default=Type.NORMAL)
 
-    app = db.relationship(
-        App,
-        uselist=False,
-        primaryjoin="AppUpdate.app_id == foreign(App.id)",
-        back_populates="updates",
-    )
     app_version = db.relationship(
         AppVersion,
         uselist=False,
@@ -154,9 +156,12 @@ class AppUpdate(db.Model):
 
         return result
 
-    def can_update(self, params: dict) -> bool:
+    def can_update(self, query: dict) -> bool:
+        """Determine if the update suitable for this query."""
         version = self.app_version
-        if version.version_code <= params["version_code"]:
+        # Currently we check the version_code only
+        # later there will be more conditions, such as car_id, region.
+        if version.version_code <= query["version_code"]:
             return False
 
         return True
