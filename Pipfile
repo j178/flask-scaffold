@@ -27,6 +27,7 @@ uwsgi = "*"
 protobuf = "*"
 flask-log-request-id = "*"
 minio = "*"
+cachetools = "*"
 
 [requires]
 python_version = "3.8"
