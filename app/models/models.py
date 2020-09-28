@@ -85,7 +85,7 @@ class AppVersion(db.Model):
     )
     updates = db.relationship(
         "AppUpdate",
-        primaryjoin="foreign(AppUpdate.app_version_id == remote(AppVersion.id))",
+        primaryjoin="foreign(AppUpdate.app_version_id) == remote(AppVersion.id)",
         back_populates="app_version",
         order_by="AppVersion.id.desc()",
         lazy="dynamic",
@@ -120,7 +120,7 @@ class AppUpdate(db.Model):
         AppVersion,
         uselist=False,
         primaryjoin="foreign(AppUpdate.app_version_id) == remote(AppVersion.id)",
-        back_populates="versions",
+        back_populates="updates",
     )
 
     def to_dict(self, params):
