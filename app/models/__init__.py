@@ -68,7 +68,6 @@ def init_models(app):
 
     from .models import App, AppUpdate, AppVersion
 
-    App.create_default_app()
     # ...
     # Import more models here
 
